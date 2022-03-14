@@ -7,7 +7,6 @@
 
 import UIKit
 //controller for main view with list of pokemons
-//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
 class ViewController: UIViewController,UITableViewDataSource ,UIScrollViewDelegate, UITableViewDelegate{
     
     private let pokemonService = PokeService()
@@ -21,7 +20,7 @@ class ViewController: UIViewController,UITableViewDataSource ,UIScrollViewDelega
         let tableViewCell = pokemonTable.dequeueReusableCell(withIdentifier: "tableViewCell") as! TableViewCell
         let cellPokemon = pokemons[indexPath.row]
         tableViewCell.name?.text = cellPokemon.name
-        //tableViewCell.pokemonImg.image =
+        tableViewCell.pokemonImg.image = cellPokemon.image
         return tableViewCell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -29,12 +28,10 @@ class ViewController: UIViewController,UITableViewDataSource ,UIScrollViewDelega
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "detailSegue" {
-            //guard self.pokemonTable.indexPathForSelectedRow != nil else{return}
             let indexPath = self.pokemonTable.indexPathForSelectedRow!
             let detailView = segue.destination as? DetailsViewController
             let selectedPokemon = pokemons[indexPath.row]
             detailView!.pokemon = selectedPokemon
-            //self.pokemonTable.deselectRow(at: indexPath, animated: true)
         }
     }
     
@@ -48,14 +45,16 @@ class ViewController: UIViewController,UITableViewDataSource ,UIScrollViewDelega
         super.viewDidLayoutSubviews()
         pokemonService.fetchPokemons(pagination: false){ result in
             switch result {
-            case .success(let fetchedPokemons):
+            case .success(let fetchedPokemons as [Pokemon]):
                 self.pokemons.append(contentsOf: fetchedPokemons)
-                DispatchQueue.main.async {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {//small delay so that all data fetches
                     self.pokemonTable.reloadData()
                 }
             case.failure(let error):
                 print("ViewController/viewDidLayoutSubviews: error while trying to fetch first pokemons\(error.localizedDescription)")
                 break
+            case .success(_):
+                print("")//happens when other calls(for each pokemon) are being completed
             }
             
         }
@@ -82,13 +81,15 @@ class ViewController: UIViewController,UITableViewDataSource ,UIScrollViewDelega
                     self?.pokemonTable.tableFooterView = nil
                 }
                 switch result {
-                case .success(let fetchedPokemons):
+                case .success(let fetchedPokemons as [Pokemon]):
                     self?.pokemons.append(contentsOf: fetchedPokemons)
                     DispatchQueue.main.async {
                         self?.pokemonTable.reloadData()
                     }
                 case .failure(let error):
                     print("ViewController/scrollViewDidScroll: Error while trying to fetch new pokemons when scrolled down\(error.localizedDescription)")
+                case .success(_):
+                    print("")
                 }
                 
             }

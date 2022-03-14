@@ -14,26 +14,32 @@ class DetailsViewController: UIViewController{
     
     @IBOutlet weak var pokemonImage: UIImageView!
   
-    @IBOutlet weak var descriptionLabel: UILabel!
     
     @IBOutlet weak var height: UILabel!
     
     @IBOutlet weak var weight: UILabel!
     
-    @IBOutlet weak var type: UILabel!
+    @IBOutlet weak var species: UILabel!
+    
+    @IBOutlet weak var defense: UILabel!
     
     @IBOutlet weak var id: UILabel!
+    
+    @IBOutlet weak var attack: UILabel!
+    
+    @IBOutlet weak var baseExperience: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         nameLabel.text = pokemon.name
         pokemonImage.image = pokemon.image
-        descriptionLabel.text = pokemon.description
         height.text = "\(pokemon.height ?? 0)"
         weight.text = "\(pokemon.weight ?? 0)"
-        type.text = pokemon.type
         id.text = "\(pokemon.id ?? 0)"
-        
+        defense.text = "\(pokemon.defense ?? 0)"
+        attack.text = "\(pokemon.attack ?? 0)"
+        species.text = "\(pokemon.species ?? "")"
+        baseExperience.text = "\(pokemon.baseExperience ?? 0)"
     }
 }
 
